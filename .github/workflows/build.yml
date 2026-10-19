@@ -36,16 +36,35 @@ jobs:
       - name: DSP self test
         run: ./Build/Release/tb303_render selftest
 
+      # Bundle the AGPL license + a source pointer next to the plugin so the
+      # distributed binary carries the license text (AGPLv3 section 4) and
+      # tells users where the Corresponding Source lives (section 6 / 13).
       - name: Package VST3
         run: |
-          cd Build/Acid303_artefacts/Release/VST3
-          ditto -c -k --sequesterRsrc --keepParent Acid303.vst3 Acid303-macOS-VST3.zip
+          set -e
+          printf '%s\n' \
+            'ACID-303 (VST3) - Corresponding Source' \
+            '======================================' \
+            '' \
+            'Licensed under the GNU Affero General Public License v3.0 or later.' \
+            'See LICENSE for the full text.' \
+            '' \
+            'Corresponding source: https://github.com/artcode49-prog/artcode303' \
+            '' \
+            'SPDX-License-Identifier: AGPL-3.0-or-later' > SOURCE.txt
+          mkdir -p pkgstage
+          cp -R Build/Acid303_artefacts/Release/VST3/Acid303.vst3 pkgstage/
+          cp LICENSE SOURCE.txt pkgstage/
+          rm -f Acid303-macOS-VST3.zip
+          ( cd pkgstage && zip -r -y -q "$GITHUB_WORKSPACE/Acid303-macOS-VST3.zip" Acid303.vst3 LICENSE SOURCE.txt )
+          echo "--- zip contents ---"
+          unzip -l Acid303-macOS-VST3.zip
 
       - name: Upload VST3
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: Acid303-macOS-VST3
-          path: Build/Acid303_artefacts/Release/VST3/Acid303-macOS-VST3.zip
+          path: Acid303-macOS-VST3.zip
           if-no-files-found: error
 
   # ---------------------------------------------------------------------------
@@ -68,13 +87,29 @@ jobs:
 
       - name: Package VST3
         shell: pwsh
-        run: >
-          Compress-Archive
-          -Path 'Build\Acid303_artefacts\Release\VST3\Acid303.vst3'
-          -DestinationPath 'Acid303-Windows-VST3.zip'
+        run: |
+          $lines = @(
+            'ACID-303 (VST3) - Corresponding Source',
+            '======================================',
+            '',
+            'Licensed under the GNU Affero General Public License v3.0 or later.',
+            'See LICENSE for the full text.',
+            '',
+            'Corresponding source: https://github.com/artcode49-prog/artcode303',
+            '',
+            'SPDX-License-Identifier: AGPL-3.0-or-later'
+          )
+          $lines | Set-Content -Encoding utf8 SOURCE.txt
+          Remove-Item -Force Acid303-Windows-VST3.zip -ErrorAction SilentlyContinue
+          Compress-Archive -Path 'Build\Acid303_artefacts\Release\VST3\Acid303.vst3','LICENSE','SOURCE.txt' -DestinationPath 'Acid303-Windows-VST3.zip'
+          Write-Host '--- zip contents ---'
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $zip = [System.IO.Compression.ZipFile]::OpenRead("$PWD\Acid303-Windows-VST3.zip")
+          $zip.Entries | ForEach-Object { $_.FullName }
+          $zip.Dispose()
 
       - name: Upload VST3
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: Acid303-Windows-VST3
           path: Acid303-Windows-VST3.zip
