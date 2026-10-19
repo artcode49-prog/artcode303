@@ -3,18 +3,28 @@ ACID-303 — TB-303 style VST3 instrument
 Version 1.0.0  /  License: GNU AGPL v3.0 or later (see LICENSE)
 
 This folder is a complete distribution set.
+The macOS build also ships as a disk image (Acid303-1.0.0-macOS.dmg), which needs
+nothing more than a double-click and a drag.
 
 INSTALLING
 
   macOS (Universal: Apple Silicon and Intel)
-    1. Copy macOS/Acid303.vst3 into
-         ~/Library/Audio/Plug-Ins/VST3/
-       (In Finder, use Go > Go to Folder... and paste that path.)
-    2. Start your DAW and let it scan for plugins (most do this automatically).
-    3. If macOS complains, see "BLOCKED BY MACOS" below.
+
+    Using the .dmg (recommended)
+      1. Double-click Acid303-1.0.0-macOS.dmg to open it.
+      2. Drag Acid303.vst3 into
+           ~/Library/Audio/Plug-Ins/VST3/
+         (In Finder, use Go > Go to Folder... and paste that path.)
+      3. Start your DAW and let it scan for plugins (most do this automatically).
+
+    Using the .zip
+      1. Unzip it and copy Acid303.vst3 into the same folder.
+      2. Start your DAW and let it scan for plugins.
+
+    If macOS complains, see "BLOCKED BY MACOS" below.
 
   Windows (64-bit)
-    1. Copy Windows/Acid303.vst3 into
+    1. Copy Acid303.vst3 into
          C:\Program Files\Common Files\VST3\
     2. Start your DAW and let it scan for plugins.
 
@@ -46,7 +56,8 @@ BLOCKED BY WINDOWS (SmartScreen)
 
 AUDIO DEMOS
 
-  demo/ contains rendered examples of the factory presets (16-bit / 48 kHz WAV).
+  Rendered examples of the factory presets (16-bit / 48 kHz WAV) live in demo/
+  of the full set Acid303-1.0.0/.
 
 LICENSE / SOURCE CODE
 
@@ -59,7 +70,14 @@ LICENSE / SOURCE CODE
 
   This software is provided without warranty (AGPLv3 sections 15 and 16).
 
-CONTENTS
+FILES SHIPPED
+
+  Acid303-1.0.0-macOS.dmg          macOS build (signed and notarized - use this)
+  Acid303-1.0.0-macOS.zip          macOS build (same contents)
+  Acid303-1.0.0-Windows.zip        Windows build
+  Acid303-1.0.0-macOS-Windows.zip  both platforms (full set)
+
+CONTENTS (of the full set Acid303-1.0.0/)
 
   README.md          full documentation (sound engine / parameters / building)
   LICENSE            GNU Affero General Public License v3

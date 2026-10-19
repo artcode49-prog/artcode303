@@ -3,18 +3,28 @@ ACID-303 — TB-303 エミュレーション VST3
 バージョン 1.0.0  /  ライセンス: GNU AGPL v3.0 またはそれ以降 (LICENSE を参照)
 
 このフォルダは配布用の一式です。
+macOS は同じ内容のディスクイメージ（Acid303-1.0.0-macOS.dmg）でも配布しており、
+そちらは開いてドラッグするだけです。
 
 ■ インストール
 
   macOS（Universal: Apple Silicon / Intel 両対応）
-    1. macOS/Acid303.vst3 を次のフォルダへコピーします
-         ~/Library/Audio/Plug-Ins/VST3/
-       （Finder の「移動 > フォルダへ移動...」に上のパスを貼り付けると簡単です）
-    2. DAW を起動してプラグインをスキャンさせます（多くは自動で認識します）
-    3. 警告が出た場合は「macOS でブロックされたとき」を参照してください
+
+    .dmg を使う場合（おすすめ）
+      1. Acid303-1.0.0-macOS.dmg をダブルクリックして開きます
+      2. 中の Acid303.vst3 を次のフォルダへドラッグします
+           ~/Library/Audio/Plug-Ins/VST3/
+         （Finder の「移動 > フォルダへ移動...」に上のパスを貼り付けると簡単です）
+      3. DAW を起動してプラグインをスキャンさせます（多くは自動で認識します）
+
+    zip を使う場合
+      1. zip を展開し、中の Acid303.vst3 を同じフォルダへコピーします
+      2. DAW を起動してプラグインをスキャンさせます
+
+    警告が出た場合は「macOS でブロックされたとき」を参照してください。
 
   Windows（64bit）
-    1. Windows/Acid303.vst3 を次のフォルダへコピーします
+    1. Acid303.vst3 を次のフォルダへコピーします
          C:\Program Files\Common Files\VST3\
     2. DAW を起動してプラグインをスキャンさせます
 
@@ -47,7 +57,8 @@ ACID-303 — TB-303 エミュレーション VST3
 
 ■ 音のサンプル
 
-  demo/ にプリセットの演奏サンプル（16bit / 48kHz WAV）が入っています。
+  演奏サンプル（16bit / 48kHz WAV）は、フルセット Acid303-1.0.0/ の demo/ に
+  入っています。
 
 ■ ライセンス / ソースコード
 
@@ -56,11 +67,18 @@ ACID-303 — TB-303 エミュレーション VST3
 
   対応するソースコード（Corresponding Source）:
     - https://github.com/artcode49-prog/artcode303
-    - 同梱の source/ フォルダにも、このバージョンと同一のソースが入っています
+    - 同梱の source/ にも、このバージョンと同一のソースが入っています
 
   本ソフトウェアは無保証で提供されます（AGPLv3 第 15 条・第 16 条）。
 
-■ 内容物
+■ 配布しているファイル
+
+  Acid303-1.0.0-macOS.dmg          macOS 版（署名・公証済み。macOS はこれで OK）
+  Acid303-1.0.0-macOS.zip          macOS 版（中身は同じ）
+  Acid303-1.0.0-Windows.zip        Windows 版
+  Acid303-1.0.0-macOS-Windows.zip  両 OS（フルセット）
+
+■ 内容物（フルセット Acid303-1.0.0/ の場合）
 
   README.md          詳細なドキュメント（サウンドエンジン / パラメータ / ビルド方法）
   LICENSE            GNU Affero General Public License v3 全文

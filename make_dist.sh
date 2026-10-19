@@ -122,6 +122,7 @@ if command -v hdiutil >/dev/null 2>&1; then
     cp -R "$mac_bundle" "$dmg_stage/Acid303.vst3"
     cp "$set_dir/INSTALL-ja.txt" "$set_dir/INSTALL-en.txt" \
        "$set_dir/LICENSE" "$set_dir/SOURCE.txt" "$dmg_stage/"
+    cp -R "$set_dir/source" "$dmg_stage/"
     find "$dmg_stage" -name '.DS_Store' -delete
     rm -f "$mac_dmg"
     hdiutil create -quiet -volname "ACID-303 $version" \
