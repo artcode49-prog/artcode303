@@ -16,9 +16,9 @@ Roland TB-303 のアナログ挙動をモデリングした VST3 シンセサイ
   ビルドしなくても単体でテストできます。
 
 > **ビルド済み VST3 が欲しい場合** — ビルド不要です。macOS 版は Developer ID で
-> 署名し Apple の公証も通した配布用 zip を用意しています（CI の Artifacts は
-> 未署名の開発用なので配布には使えません）。
-> → [ダウンロード方法](#ダウンロードビルド済み-vst3) / [配布セットを作る](#配布セットを作る)
+> 署名し Apple の公証も通しています。配布用の zip は GitHub Release にあります。
+> → [Release](https://github.com/artcode49-prog/artcode303/releases/latest) /
+> [ダウンロード方法](#ダウンロードビルド済み-vst3)
 
 ---
 
@@ -169,19 +169,35 @@ Roland TB-303 のアナログ挙動をモデリングした VST3 シンセサイ
 
 ## ダウンロード（ビルド済み VST3）
 
-**受け取る人に渡すときは、`Dist/` の配布セット（macOS は署名 + 公証済み）だけを
-使ってください。**
+**ビルド不要です。配布用の zip は GitHub Release に置いてあります。**
 
-```
-Acid303-1.0.0-macOS.zip          macOS 版 (Developer ID 署名 + 公証済み)
-Acid303-1.0.0-Windows.zip        Windows 版 (未署名 / SmartScreen は「詳細情報 → 実行」)
-Acid303-1.0.0-macOS-Windows.zip  両方
-```
+<https://github.com/artcode49-prog/artcode303/releases/latest>
 
-作り方は [配布セットを作る](#配布セットを作る) を参照してください。できた zip は
-メール・USB・クラウド・GitHub Release など、どの経路で渡しても構いません
-（macOS 版はチケットをステープル済みなので、オフラインでも Gatekeeper を
-通過します）。
+| ファイル | 内容 |
+|---|---|
+| `Acid303-1.0.0-macOS.zip` | macOS 版 (Universal: arm64 + x86_64) — **Developer ID 署名 + Apple 公証済み** |
+| `Acid303-1.0.0-Windows.zip` | Windows 版 (x64) — 未署名 |
+| `Acid303-1.0.0-macOS-Windows.zip` | 両方 |
+
+### ダウンロード時の警告について
+
+Chrome / Edge が「一般的にダウンロードされていません」「安全ではない可能性が
+あります」と表示することがあります。これは **Apple の署名・公証とは無関係**です。
+Google Safe Browsing (Chrome) / Microsoft SmartScreen (Edge) が「このファイルは
+まだ世の中で知られていない」と判定しているだけで、コード署名では消えません
+（Windows は Apple の公証を一切見ません）。中身は検査済みで、実行ファイルは
+公証済みの `Acid303` だけです。
+
+- `github.com` からのダウンロードは信頼済み扱いになりやすいため、Release の
+  ページから落とすのが最も警告の出にくい経路です
+- 出てしまった場合は「保持する / Keep」を選べばそのまま使えます
+- ダウンロード数が増えると、この種の警告は自然に出なくなります
+
+### 自分で作る場合
+
+`./make_dist.sh` で同じ zip を手元で作れます（→ [配布セットを作る](#配布セットを作る)）。
+できた zip はメール・USB・クラウドなど、どの経路で渡しても構いません（macOS 版は
+チケットをステープル済みなので、オフラインでも Gatekeeper を通過します）。
 
 macOS でのインストール先は `~/Library/Audio/Plug-Ins/VST3/`、Windows では
 `C:\Program Files\Common Files\VST3\` です。
@@ -577,6 +593,11 @@ Presets/
 
 ### 修正履歴
 
+- **GitHub Release を公開**：配布用の zip を
+  <https://github.com/artcode49-prog/artcode303/releases/latest> に置きました。
+  ブラウザの「不審なダウンロード」警告はコード署名ではなく Google Safe Browsing /
+  SmartScreen の**評判**によるものなので、信頼済みホスト (github.com) からの
+  ダウンロードを入口にしています。
 - **配布経路を `Dist/` の署名済み zip に一本化**：CI の Artifacts は未署名で
   Gatekeeper にブロックされるため、配布用の案内から外し「開発用」として
   区別しました。渡すのは `Dist/Acid303-<version>-*.zip` だけです。
