@@ -14,7 +14,7 @@ jobs:
     name: macOS (Universal)
     runs-on: macos-14
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Configure
         run: >
@@ -28,11 +28,17 @@ jobs:
       - name: DSP self test
         run: ./Build/Release/tb303_render selftest
 
+      - name: Package VST3
+        run: |
+          cd Build/Acid303_artefacts/Release/VST3
+          ditto -c -k --sequesterRsrc --keepParent Acid303.vst3 Acid303-macOS-VST3.zip
+
       - name: Upload VST3
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: Acid303-macOS-VST3
-          path: Build/Acid303_artefacts/Release/VST3/Acid303.vst3
+          path: Build/Acid303_artefacts/Release/VST3/Acid303-macOS-VST3.zip
+          if-no-files-found: error
 
   # ---------------------------------------------------------------------------
   # Windows: x64 VST3 (MSVC)
@@ -41,7 +47,7 @@ jobs:
     name: Windows (x64)
     runs-on: windows-2022
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Configure
         run: cmake -S . -B Build -G "Visual Studio 17 2022" -A x64
@@ -52,8 +58,16 @@ jobs:
       - name: DSP self test
         run: .\Build\Release\tb303_render.exe selftest
 
+      - name: Package VST3
+        shell: pwsh
+        run: >
+          Compress-Archive
+          -Path 'Build\Acid303_artefacts\Release\VST3\Acid303.vst3'
+          -DestinationPath 'Acid303-Windows-VST3.zip'
+
       - name: Upload VST3
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: Acid303-Windows-VST3
-          path: Build/Acid303_artefacts/Release/VST3/Acid303.vst3
+          path: Acid303-Windows-VST3.zip
+          if-no-files-found: error
