@@ -15,9 +15,10 @@ Roland TB-303 のアナログ挙動をモデリングした VST3 シンセサイ
 - DSP コアは **JUCE 非依存の純 C++** (`Source/dsp/`) なので、プラグインを
   ビルドしなくても単体でテストできます。
 
-> **ビルド済み VST3 が欲しい場合** — ビルド不要です。GitHub Actions の最新
-> 実行の **Artifacts** からそのままダウンロードできます。
-> → [ダウンロード方法](#ダウンロードビルド済み-vst3) / [Actions](https://github.com/artcode49-prog/artcode303/actions/workflows/build.yml)
+> **ビルド済み VST3 が欲しい場合** — ビルド不要です。macOS 版は Developer ID で
+> 署名し Apple の公証も通した配布用 zip を用意しています（CI の Artifacts は
+> 未署名の開発用なので配布には使えません）。
+> → [ダウンロード方法](#ダウンロードビルド済み-vst3) / [配布セットを作る](#配布セットを作る)
 
 ---
 
@@ -168,45 +169,42 @@ Roland TB-303 のアナログ挙動をモデリングした VST3 シンセサイ
 
 ## ダウンロード（ビルド済み VST3）
 
-> **警告**: GitHub Actions の **Artifacts は未署名の開発用ビルド**です。
+**受け取る人に渡すときは、`Dist/` の配布セット（macOS は署名 + 公証済み）だけを
+使ってください。**
+
+```
+Acid303-1.0.0-macOS.zip          macOS 版 (Developer ID 署名 + 公証済み)
+Acid303-1.0.0-Windows.zip        Windows 版 (未署名 / SmartScreen は「詳細情報 → 実行」)
+Acid303-1.0.0-macOS-Windows.zip  両方
+```
+
+作り方は [配布セットを作る](#配布セットを作る) を参照してください。できた zip は
+メール・USB・クラウド・GitHub Release など、どの経路で渡しても構いません
+（macOS 版はチケットをステープル済みなので、オフラインでも Gatekeeper を
+通過します）。
+
+macOS でのインストール先は `~/Library/Audio/Plug-Ins/VST3/`、Windows では
+`C:\Program Files\Common Files\VST3\` です。
+
+### GitHub Actions の Artifacts について（配布用ではありません）
+
+> **警告**: Actions の **Artifacts は CI がビルドしただけの未署名バイナリ**です。
 > macOS では Gatekeeper に「開発元を確認できません」「壊れているため開けません」
-> とブロックされます（CI には署名証明書がないため）。**受け取る人に渡す場合は
-> Artifacts ではなく、署名・公証済みの「配布セット」を使ってください**
-> → [配布セットを作る](#配布セットを作る)
-
-配布セットがあれば、それだけで完結します:
-
-```
-Acid303-1.0.0-macOS.zip         macOS 版（署名 + 公証済み）
-Acid303-1.0.0-Windows.zip       Windows 版（未署名）
-Acid303-1.0.0-macOS-Windows.zip 両方
-```
-
-もし Artifacts（開発用ビルド）を使う場合は次のようにします。
-
-1. [Actions → build](https://github.com/artcode49-prog/artcode303/actions/workflows/build.yml)
-   を開き、最新の成功した実行（緑のチェック）を選ぶ
-2. ページ下部の **Artifacts** から `Acid303-macOS-VST3` または
-   `Acid303-Windows-VST3` をダウンロード
-3. zip を展開して `Acid303.vst3` を VST3 フォルダへ配置
-
-   - macOS: `~/Library/Audio/Plug-Ins/VST3/`
-   - Windows: `C:\Program Files\Common Files\VST3\`
+> とブロックされます。署名証明書は各自のキーチェーンにあり CI には無いためです。
+> **動作確認用、または Windows ビルドを取り出す用途**としてのみ使ってください。
 
 ```bash
-# CLI で取得する場合 (要 gh)
+# Windows ビルドを CI から取り出す場合 (make_dist.sh も内部でこれを使います)
 gh run download -R artcode49-prog/artcode303 -n Acid303-Windows-VST3
 ```
 
-> zip は `Acid303.vst3/Contents/...` を含むので、展開するだけでそのまま
-> 使えます（フォルダを手で作る必要はありません）。zip には `LICENSE`
-> （AGPLv3 全文）と `SOURCE.txt`（ソースの入手先）も同梱されます。
+どうしても Artifacts の macOS 版を使う場合は、展開後に隔離属性を外します:
+
+```bash
+xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/Acid303.vst3
+```
 
 > **注意**: このバイナリは AGPLv3 で配布されます。ソースは本リポジトリです。
-> Artifacts の macOS 版は**未署名**なので、Gatekeeper の警告が出たら
-> `xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/Acid303.vst3`
-> で解除してください（署名・公証済みの配布セットでは不要です）。
-> Windows 版は未署名のため、SmartScreen では「詳細情報 → 実行」を選びます。
 
 ---
 
@@ -579,6 +577,9 @@ Presets/
 
 ### 修正履歴
 
+- **配布経路を `Dist/` の署名済み zip に一本化**：CI の Artifacts は未署名で
+  Gatekeeper にブロックされるため、配布用の案内から外し「開発用」として
+  区別しました。渡すのは `Dist/Acid303-<version>-*.zip` だけです。
 - **プラットフォーム別 zip を追加**：`Acid303-1.0.0-macOS.zip` /
   `Acid303-1.0.0-Windows.zip` を追加しました。どちらのビルドが「安全では
   ありません」と警告されるのか切り分けられます。
