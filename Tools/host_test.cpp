@@ -184,6 +184,52 @@ int main (int argc, char* argv[])
         std::printf ("OK: state saves and restores exactly\n");
     }
 
+    //--------------------------------------------------------------- host transport
+    // The sequencer must follow the host transport in both directions.
+    {
+        auto renderSeconds = [&] (double secs) -> juce::AudioBuffer<float>
+        {
+            const int total = (int) (secs * sampleRate);
+            juce::AudioBuffer<float> out (2, total);
+            out.clear();
+
+            juce::AudioBuffer<float> blk (2, blockSize);
+            juce::MidiBuffer midi;
+
+            int done = 0;
+            while (done < total)
+            {
+                const int n = juce::jmin (blockSize, total - done);
+                blk.setSize (2, n, false, false, true);
+                blk.clear();
+                midi.clear();
+                instance->processBlock (blk, midi);
+                for (int c = 0; c < 2; ++c)
+                    out.copyFrom (c, done, blk, c, 0, n);
+                done += n;
+            }
+            return out;
+        };
+
+        playHead.playing = false;                     // host transport stops
+        auto stopped = renderSeconds (3.0);
+        const float tail = stopped.getMagnitude (0, (int) (2.0 * sampleRate), (int) (0.5 * sampleRate));
+
+        playHead.playing = true;                      // host transport rolls again
+        auto restarted = renderSeconds (1.0);
+        const float again = restarted.getMagnitude (0, 0, restarted.getNumSamples());
+
+        std::printf ("host stop -> tail peak %.5f, host restart -> peak %.3f\n", tail, again);
+
+        if (tail > 0.005f || again < 0.01f)
+        {
+            std::printf ("FAILED: host transport stop/start did not silence/resume the sequencer\n");
+            return 1;
+        }
+
+        std::printf ("OK: host transport stop and restart control the sequencer\n");
+    }
+
     instance->releaseResources();
 
     if (magnitude < 0.001f)

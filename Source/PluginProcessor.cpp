@@ -129,7 +129,7 @@ void Tb303AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
     engine.setTranspose (transposeKnobToSemis (params.transpose));
 
     //--------------------------------------------------------------- transport
-    bool playing = sequencerRunning.load();
+    bool playing = false;
 
     if (params.hostSync)
     {
@@ -148,12 +148,15 @@ void Tb303AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
             engine.setHostTempo (bpm);
             currentBpm.store (bpm);
         }
-        playing = hostPlaying;
+
+        playing = transport.update (true, hostPlaying);
     }
     else
     {
         engine.clearHostTempo();
         currentBpm.store (tempoKnobToBpm (params.tempo));
+
+        playing = transport.update (false, false);
     }
 
     engine.setPlaying (playing);
@@ -206,7 +209,7 @@ void Tb303AudioProcessor::playNotesFromKeyboard (bool on, int midiNote, float ve
 //==============================================================================
 void Tb303AudioProcessor::setPlaying (bool shouldPlay)
 {
-    sequencerRunning.store (shouldPlay);
+    transport.requestPlay (shouldPlay);
 }
 
 //==============================================================================
@@ -316,7 +319,7 @@ void Tb303AudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
     patternToTree();
     auto state = apvts.copyState();
-    state.setProperty ("playing", sequencerRunning.load(), nullptr);
+    state.setProperty ("playing", transport.isRequested(), nullptr);
     state.setProperty ("currentPreset", currentPreset, nullptr);
 
     if (auto xml = state.createXml())
@@ -334,7 +337,7 @@ void Tb303AudioProcessor::setStateInformation (const void* data, int sizeInBytes
 
     patternFromTree();
 
-    sequencerRunning.store ((bool) newState.getProperty ("playing", false));
+    transport.requestPlay ((bool) newState.getProperty ("playing", false));
     currentPreset = (int) newState.getProperty ("currentPreset", 0);
 
     syncParamsFromState();

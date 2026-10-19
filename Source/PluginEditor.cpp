@@ -655,7 +655,10 @@ void Tb303AudioProcessorEditor::timerCallback()
     if (playButton.getToggleState() != proc.isPlaying())
         playButton.setToggleState (proc.isPlaying(), juce::dontSendNotification);
 
-    statusLabel.setText ("OUT " + juce::String (juce::Decibels::gainToDecibels (proc.getOutputLevel(), -60.0f), 1) + " dB",
+    // In Host mode the sequencer only runs while the DAW is rolling, so say so
+    // instead of leaving the PLAY button looking broken.
+    const juce::String level = "OUT " + juce::String (juce::Decibels::gainToDecibels (proc.getOutputLevel(), -60.0f), 1) + " dB";
+    statusLabel.setText (proc.isWaitingForHost() ? "WAIT (host stopped)  " + level : level,
                          juce::dontSendNotification);
 }
 

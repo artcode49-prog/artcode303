@@ -9,6 +9,7 @@
 #include <atomic>
 
 #include "dsp/Tb303Engine.h"
+#include "dsp/Tb303Transport.h"
 
 class Tb303AudioProcessor : public juce::AudioProcessor
 {
@@ -53,11 +54,15 @@ public:
     tb303::Step getStep (int index) const;
 
     //========================================================== transport / sequencer
+    // The PLAY button. In Internal mode it *is* the transport; in Host mode it
+    // acts as a stop/pause that lasts until the host transport is restarted
+    // (or PLAY is pressed again), so the button can always stop the sequencer.
     void setPlaying (bool shouldPlay);
     // Effective transport state (follows the host in Host mode).
     bool isPlaying() const { return transportActive.load(); }
-    // The user's internal PLAY button intent (only meaningful in Internal mode).
-    bool isInternalPlaying() const { return sequencerRunning.load(); }
+    // True while the user wants to play but the host transport is not rolling
+    // (Host mode only): the sequencer is armed and waiting for the DAW.
+    bool isWaitingForHost() const { return transport.isRequested() && ! transportActive.load(); }
     int getCurrentStep() const { return engine.getCurrentStep(); }
     void playNotesFromKeyboard (bool on, int midiNote, float velocity);
 
@@ -91,7 +96,7 @@ private:
     juce::SpinLock patternLock;
     tb303::Pattern patternCopy;
     std::atomic<bool> patternDirty { true };
-    std::atomic<bool> sequencerRunning { false };
+    tb303::TransportGate transport;                // PLAY button / host transport
     std::atomic<bool> transportActive { false };   // effective playing state (audio thread)
     std::atomic<int>  clockSource { 0 };      // 0 = internal, 1 = host
     std::atomic<double> currentBpm { 120.0 };

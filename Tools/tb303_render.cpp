@@ -20,6 +20,7 @@
 
 #include "Tb303Engine.h"
 #include "Tb303Pattern.h"
+#include "Tb303Transport.h"
 
 using namespace tb303;
 
@@ -354,6 +355,67 @@ static int selfTest()
         char b2[160];
         std::snprintf (b2, sizeof b2, "peak %.3f, rms %.4f (%.1f dBFS)", peak, rms, db (rms));
         check (peak < 0.999 && rms > 0.01, "healthy output level", b2);
+    }
+
+    // ---- transport gate: the PLAY button ---------------------------------
+    std::printf ("\n-- Transport gate (PLAY button) --\n");
+    {
+        // Internal mode: the button is the transport and starts stopped.
+        TransportGate g;
+        const bool stop0 = ! g.update (false, false);
+        g.requestPlay (true);
+        const bool runs  = g.update (false, false);
+        g.requestPlay (false);
+        const bool stops = ! g.update (false, false);
+        check (stop0 && runs && stops, "internal: PLAY starts and stops",
+               "stopped / running / stopped");
+    }
+    {
+        // Host mode follows the DAW transport.
+        TransportGate h;
+        const bool silent = ! h.update (true, false);
+        const bool rolls  = h.update (true, true);
+        check (silent && rolls, "host: follows the host transport",
+               "silent while stopped, plays while rolling");
+    }
+    {
+        // ...but the PLAY button must be able to stop the run (the reported bug).
+        TransportGate h;
+        h.update (true, true);
+        h.requestPlay (false);
+        const bool stopped = ! h.update (true, true);
+        const bool stays   = ! h.update (true, true);
+        check (stopped && stays, "host: PLAY stops the sequencer",
+               "stops and stays stopped while the host rolls");
+    }
+    {
+        // A fresh host start re-arms it, like a synced 303.
+        TransportGate h;
+        h.update (true, true);
+        h.requestPlay (false);
+        h.update (true, true);
+        h.update (true, false);
+        const bool rearmed = h.update (true, true);
+        check (rearmed, "host: a new host start plays again",
+               "re-armed on the next host transport start");
+    }
+    {
+        // Pressing PLAY while the host is stopped must not fake a run.
+        TransportGate h;
+        h.requestPlay (true);
+        const bool silent = ! h.update (true, false);
+        check (silent, "host: no sound while the host is stopped",
+               "PLAY arms it, the host start plays it");
+    }
+    {
+        // Switching clock source keeps whatever the button asked for.
+        TransportGate h;
+        h.update (true, true);
+        const bool continues = h.update (false, false);
+        h.requestPlay (false);
+        const bool stops = ! h.update (false, false);
+        check (continues && stops, "clock switch keeps the button state",
+               "INT continues the run, PLAY stops it");
     }
 
     std::printf ("\n%s (%d failure%s)\n\n", failures == 0 ? "ALL TESTS PASSED" : "TESTS FAILED",
