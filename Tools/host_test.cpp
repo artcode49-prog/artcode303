@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 artcode49-prog  <https://github.com/artcode49-prog/artcode303>
+// ACID-303 is free software licensed under the GNU AGPL v3 or later; see LICENSE.
+
 // host_test.cpp - loads the built Acid303 VST3 with JUCE's plugin host code and
 // renders it, proving that the packaged plugin loads and makes sound.
 //

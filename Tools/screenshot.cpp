@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 artcode49-prog  <https://github.com/artcode49-prog/artcode303>
+// ACID-303 is free software licensed under the GNU AGPL v3 or later; see LICENSE.
+
 // screenshot.cpp - instantiates the plugin, opens its editor and saves a PNG,
 // so the front panel can be checked without a DAW.
 #include <JuceHeader.h>

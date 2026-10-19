@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 artcode49-prog  <https://github.com/artcode49-prog/artcode303>
+// ACID-303 is free software licensed under the GNU AGPL v3 or later; see LICENSE.
+
 // Tb303Common.h - shared DSP utilities for the TB-303 emulation core.
 // Pure C++ (no JUCE dependency) so the DSP can be tested standalone.
 #pragma once
