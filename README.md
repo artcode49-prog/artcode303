@@ -168,7 +168,21 @@ Roland TB-303 のアナログ挙動をモデリングした VST3 シンセサイ
 
 ## ダウンロード（ビルド済み VST3）
 
-ビルド不要で使いたい場合は、CI が生成した最新の VST3 をそのまま使えます。
+> **警告**: GitHub Actions の **Artifacts は未署名の開発用ビルド**です。
+> macOS では Gatekeeper に「開発元を確認できません」「壊れているため開けません」
+> とブロックされます（CI には署名証明書がないため）。**受け取る人に渡す場合は
+> Artifacts ではなく、署名・公証済みの「配布セット」を使ってください**
+> → [配布セットを作る](#配布セットを作る)
+
+配布セットがあれば、それだけで完結します:
+
+```
+Acid303-1.0.0-macOS.zip         macOS 版（署名 + 公証済み）
+Acid303-1.0.0-Windows.zip       Windows 版（未署名）
+Acid303-1.0.0-macOS-Windows.zip 両方
+```
+
+もし Artifacts（開発用ビルド）を使う場合は次のようにします。
 
 1. [Actions → build](https://github.com/artcode49-prog/artcode303/actions/workflows/build.yml)
    を開き、最新の成功した実行（緑のチェック）を選ぶ
@@ -189,8 +203,10 @@ gh run download -R artcode49-prog/artcode303 -n Acid303-Windows-VST3
 > （AGPLv3 全文）と `SOURCE.txt`（ソースの入手先）も同梱されます。
 
 > **注意**: このバイナリは AGPLv3 で配布されます。ソースは本リポジトリです。
-> macOS 版は署名・公証を行っていないため、初回起動時に Gatekeeper の警告が
-> 出ることがあります。
+> Artifacts の macOS 版は**未署名**なので、Gatekeeper の警告が出たら
+> `xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/Acid303.vst3`
+> で解除してください（署名・公証済みの配布セットでは不要です）。
+> Windows 版は未署名のため、SmartScreen では「詳細情報 → 実行」を選びます。
 
 ---
 
@@ -220,8 +236,15 @@ Dist/
     Windows/Acid303.vst3                 x64
     demo/*.wav                           演奏サンプル (16bit / 48kHz)
     source/Acid303-1.0.0-source.tar.gz   対応するソース (AGPLv3 用)
-  Acid303-1.0.0-macOS-Windows.zip        一式を zip にしたもの
+  Acid303-1.0.0-macOS.zip                macOS 版だけをまとめた zip (単体で完結)
+  Acid303-1.0.0-Windows.zip              Windows 版だけをまとめた zip (単体で完結)
+  Acid303-1.0.0-macOS-Windows.zip        両 OS をまとめた zip
 ```
+
+各 zip は `LICENSE` / `SOURCE.txt` / ソース / デモ WAV を含むので、単体で配布
+できます。**「このファイルは安全ではありません」と警告が出る OS を切り分けたい
+ときは、プラットフォーム別の zip を個別に試してください**（macOS 版は署名・
+公証済み、Windows 版はコード署名証明書が無いため未署名です）。
 
 `Dist/` は git 管理外なので、リポジトリを汚しません。
 
@@ -556,6 +579,9 @@ Presets/
 
 ### 修正履歴
 
+- **プラットフォーム別 zip を追加**：`Acid303-1.0.0-macOS.zip` /
+  `Acid303-1.0.0-Windows.zip` を追加しました。どちらのビルドが「安全では
+  ありません」と警告されるのか切り分けられます。
 - **macOS ビルドに Developer ID 署名 + 公証を追加**：ad-hoc 署名のままだと、
   ダウンロードした人が Gatekeeper に「開発元を確認できません」とブロックされて
   しまいました。`make_dist.sh` が `Developer ID Application` 証明書で署名

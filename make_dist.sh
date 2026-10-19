@@ -110,10 +110,39 @@ elif [ -n "$sign_identity" ]; then
 fi
 
 #---------------------------------------------------------------- zip
-zip_file="Dist/$name-macOS-Windows.zip"
-rm -f "$zip_file"
-ditto -c -k --norsrc --noextattr --keepParent "$set_dir" "$zip_file"
+# One archive per platform, plus the combined set. Keeping them apart makes it
+# obvious which build an operating system is unhappy about: the macOS bundle is
+# signed and notarized, the Windows DLL is not (no code signing certificate).
+zip_set() {
+    local src="$1" dest="$2"
+    rm -f "$dest"
+    ditto -c -k --norsrc --noextattr --keepParent "$src" "$dest"
+}
+
+# A standalone, AGPL-complete package for one platform.
+stage_platform() {
+    local platform="$1" dest="$2"
+    local stage="$work/pkg-$platform"
+    rm -rf "$stage"
+    mkdir -p "$stage/$name-$platform"
+    cp -R "$set_dir/$platform/Acid303.vst3" "$stage/$name-$platform/"
+    cp "$set_dir/README.md" "$set_dir/LICENSE" "$set_dir/SOURCE.txt" \
+       "$set_dir/INSTALL-ja.txt" "$set_dir/INSTALL-en.txt" "$stage/$name-$platform/"
+    cp -R "$set_dir/demo" "$set_dir/source" "$stage/$name-$platform/"
+    find "$stage" -name '.DS_Store' -delete
+    zip_set "$stage/$name-$platform" "$dest"
+}
+
+all_zip="Dist/$name-macOS-Windows.zip"
+mac_zip="Dist/$name-macOS.zip"
+win_zip="Dist/$name-Windows.zip"
+
+zip_set "$set_dir" "$all_zip"
+stage_platform "macOS" "$mac_zip"
+stage_platform "Windows" "$win_zip"
 
 echo
-echo "set:     $set_dir"
-echo "archive: $zip_file ($(du -h "$zip_file" | cut -f1))"
+echo "set:         $set_dir"
+echo "macOS:       $mac_zip ($(du -h "$mac_zip" | cut -f1))"
+echo "Windows:     $win_zip ($(du -h "$win_zip" | cut -f1))"
+echo "both OSes:   $all_zip ($(du -h "$all_zip" | cut -f1))"
