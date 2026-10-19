@@ -1,5 +1,8 @@
 # ACID-303
 
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
+[![build](https://github.com/artcode49-prog/artcode303/actions/workflows/build.yml/badge.svg)](https://github.com/artcode49-prog/artcode303/actions/workflows/build.yml)
+
 Roland TB-303 のアナログ挙動をモデリングした VST3 シンセサイザーです。
 4 極ダイオードラダー VCF / 内蔵 16 ステップシーケンサー / アクセント・スライド /
 オリジナル準拠の GUI / ファクトリープリセットを備え、さらに **DAW が無くても
@@ -12,18 +15,24 @@ Roland TB-303 のアナログ挙動をモデリングした VST3 シンセサイ
 - DSP コアは **JUCE 非依存の純 C++** (`Source/dsp/`) なので、プラグインを
   ビルドしなくても単体でテストできます。
 
+> **ビルド済み VST3 が欲しい場合** — ビルド不要です。GitHub Actions の最新
+> 実行の **Artifacts** からそのままダウンロードできます。
+> → [ダウンロード方法](#ダウンロードビルド済み-vst3) / [Actions](../../actions/workflows/build.yml)
+
 ---
 
 ## 目次
-1. [音作りの構成（サウンドエンジン）](#サウンドエンジン)
-2. [パラメータ一覧](#パラメータ一覧)
-3. [内蔵シーケンサーの使い方](#シーケンサーの使い方)
-4. [GUI の説明](#gui-の説明)
-5. [ビルド方法](#ビルド方法)
-6. [検証用ツール（レンダラー）](#検証用ツール)
-7. [検証結果](#検証結果)
-8. [ファイル構成](#ファイル構成)
-9. [既知の注意点](#既知の注意点)
+1. [ダウンロード（ビルド済み VST3）](#ダウンロードビルド済み-vst3)
+2. [音作りの構成（サウンドエンジン）](#サウンドエンジン)
+3. [パラメータ一覧](#パラメータ一覧)
+4. [内蔵シーケンサーの使い方](#シーケンサーの使い方)
+5. [GUI の説明](#gui-の説明)
+6. [ビルド方法](#ビルド方法)
+7. [検証用ツール（レンダラー）](#検証用ツール)
+8. [検証結果](#検証結果)
+9. [ファイル構成](#ファイル構成)
+10. [ライセンス](#ライセンス)
+11. [既知の注意点](#既知の注意点)
 
 ---
 
@@ -151,6 +160,33 @@ Roland TB-303 のアナログ挙動をモデリングした VST3 シンセサイ
 
 ---
 
+## ダウンロード（ビルド済み VST3）
+
+ビルド不要で使いたい場合は、CI が生成した最新の VST3 をそのまま使えます。
+
+1. [Actions → build](../../actions/workflows/build.yml) を開き、最新の成功した
+   実行（緑のチェック）を選ぶ
+2. ページ下部の **Artifacts** から `Acid303-macOS-VST3` または
+   `Acid303-Windows-VST3` をダウンロード
+3. zip を展開して `Acid303.vst3` を VST3 フォルダへ配置
+
+   - macOS: `~/Library/Audio/Plug-Ins/VST3/`
+   - Windows: `C:\Program Files\Common Files\VST3\`
+
+```bash
+# CLI で取得する場合 (要 gh)
+gh run download -R artcode49-prog/artcode303 -n Acid303-Windows-VST3
+```
+
+> zip は `Acid303.vst3/Contents/...` を含むので、展開するだけでそのまま
+> 使えます（フォルダを手で作る必要はありません）。
+
+> **注意**: このバイナリは AGPLv3 で配布されます。ソースは本リポジトリです。
+> macOS 版は署名・公証を行っていないため、初回起動時に Gatekeeper の警告が
+> 出ることがあります。
+
+---
+
 ## ビルド方法
 
 ### 必要環境
@@ -237,17 +273,17 @@ VST3 を自動ビルドし、成果物 (artifact) としてアップロードし
 `push` / `pull_request` / 手動 (`workflow_dispatch`) で実行されます。
 
 ```bash
-# このフォルダは git リポジトリ済み（初回コミット済み）
-git remote add origin https://github.com/<あなたのユーザー>/<リポジトリ>.git
-git branch -M main
-git push -u origin main
+# このフォルダは git リポジトリ済みで origin 設定済み
+git remote -v      # origin  https://github.com/artcode49-prog/artcode303.git
+git push origin main
 ```
 
 push すると GitHub の **Actions** タブでビルドが走り、完了後に
-`Acid303-macOS-VST3` と `Acid303-Windows-VST3` をダウンロードできます。
+`Acid303-macOS-VST3` と `Acid303-Windows-VST3`（いずれも zip）を
+ダウンロードできます。zip には `Acid303.vst3` フォルダごと入っています。
 
 - macOS: `Acid303.vst3` を `~/Library/Audio/Plug-Ins/VST3/` へ
-- Windows: 展開して `C:\Program Files\Common Files\VST3\Acid303.vst3` へ
+- Windows: `Acid303.vst3` を `C:\Program Files\Common Files\VST3\` へ
 
 > このマシン (macOS) には MSVC / MinGW が無いため Windows バイナリのローカル
 > 生成はできません。Windows 版は上記 CI、または Windows 実機での `build.bat`
