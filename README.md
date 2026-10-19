@@ -17,7 +17,7 @@ Roland TB-303 のアナログ挙動をモデリングした VST3 シンセサイ
 
 > **ビルド済み VST3 が欲しい場合** — ビルド不要です。GitHub Actions の最新
 > 実行の **Artifacts** からそのままダウンロードできます。
-> → [ダウンロード方法](#ダウンロードビルド済み-vst3) / [Actions](../../actions/workflows/build.yml)
+> → [ダウンロード方法](#ダウンロードビルド済み-vst3) / [Actions](https://github.com/artcode49-prog/artcode303/actions/workflows/build.yml)
 
 ---
 
@@ -164,8 +164,8 @@ Roland TB-303 のアナログ挙動をモデリングした VST3 シンセサイ
 
 ビルド不要で使いたい場合は、CI が生成した最新の VST3 をそのまま使えます。
 
-1. [Actions → build](../../actions/workflows/build.yml) を開き、最新の成功した
-   実行（緑のチェック）を選ぶ
+1. [Actions → build](https://github.com/artcode49-prog/artcode303/actions/workflows/build.yml)
+   を開き、最新の成功した実行（緑のチェック）を選ぶ
 2. ページ下部の **Artifacts** から `Acid303-macOS-VST3` または
    `Acid303-Windows-VST3` をダウンロード
 3. zip を展開して `Acid303.vst3` を VST3 フォルダへ配置
@@ -179,7 +179,8 @@ gh run download -R artcode49-prog/artcode303 -n Acid303-Windows-VST3
 ```
 
 > zip は `Acid303.vst3/Contents/...` を含むので、展開するだけでそのまま
-> 使えます（フォルダを手で作る必要はありません）。
+> 使えます（フォルダを手で作る必要はありません）。zip には `LICENSE`
+> （AGPLv3 全文）と `SOURCE.txt`（ソースの入手先）も同梱されます。
 
 > **注意**: このバイナリは AGPLv3 で配布されます。ソースは本リポジトリです。
 > macOS 版は署名・公証を行っていないため、初回起動時に Gatekeeper の警告が
@@ -431,18 +432,19 @@ Presets/
 
 ### 配布時のチェックリスト
 
-- [ ] リポジトリを **public** にする（ソース提供のため）
-- [ ] `LICENSE`（AGPLv3 全文）をバイナリ配布物に同梱する
-- [ ] 著作権表示と「無保証」表示を保持する
+- [x] リポジトリを **public** にする（ソース提供のため）
+      → 公開済み: <https://github.com/artcode49-prog/artcode303>
+- [x] `LICENSE`（AGPLv3 全文）をバイナリ配布物に同梱する
+      → CI が成果物 zip に `LICENSE` と `SOURCE.txt` を同梱
+- [x] 著作権表示と「無保証」表示を保持する
+      → 各ソースの SPDX ヘッダ + `LICENSE`
+- [x] 商標 ("Roland" / "TB-303") を使っていないか確認する
+      → 製品名は "ACID-303"（プラグイン名は `Acid303`）
 - [ ] macOS: `codesign` + `notarytool` で署名・公証する（警告回避）
 - [ ] Windows: コード署名証明書で署名する（推奨）
-- [ ] 商標 ("Roland" / "TB-303") を使っていないか確認する
 
-> リポジトリを public にするには:
-> ```bash
-> gh repo edit artcode49-prog/artcode303 --visibility public --accept-visibility-change-consequences
-> ```
-
+> 現状のバイナリは**未署名**です。他人に配る場合は macOS の署名・公証を
+> 行うと Gatekeeper の警告が出なくなります（個人利用ならそのままで可）。
 
 ---
 
@@ -461,6 +463,12 @@ Presets/
 
 ### 修正履歴
 
+- **AGPLv3 で配布開始**：`LICENSE`（AGPLv3 全文）と各ソースの SPDX ヘッダを
+  追加し、リポジトリを **public** 化。CI の成果物 zip に `LICENSE` と
+  `SOURCE.txt` を同梱するようにしました。
+- **Windows (x64) 版 VST3 に対応**：GitHub Actions で macOS (Universal) と
+  Windows (x64) を自動ビルドし、`Acid303.vst3` フォルダごと zip 化して
+  ダウンロードできるようにしました。
 - **「停止しても鳴り続ける」問題を修正**：`DECAY` ノブが実際にはエンベロープへ
   反映されていませんでした（ハードコードの 0.4 秒固定）。`decayKnobToSeconds()`
   を配線し、停止後の余韻が DECAY 相応（既定で約 0.14 秒）になりました。
