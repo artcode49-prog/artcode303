@@ -1,0 +1,52 @@
+ACID-303 — TB-303 エミュレーション VST3
+========================================
+バージョン 1.0.0  /  ライセンス: GNU AGPL v3.0 またはそれ以降 (LICENSE を参照)
+
+このフォルダは配布用の一式です。
+
+■ インストール
+
+  macOS（Universal: Apple Silicon / Intel 両対応）
+    1. macOS/Acid303.vst3 を次のフォルダへコピーします
+         ~/Library/Audio/Plug-Ins/VST3/
+       （Finder の「移動 > フォルダへ移動...」に上のパスを貼り付けると簡単です）
+    2. DAW を起動してプラグインをスキャンさせます（多くは自動で認識します）
+    3. 未署名のため、初回に Gatekeeper の警告が出ることがあります
+
+  Windows（64bit）
+    1. Windows/Acid303.vst3 を次のフォルダへコピーします
+         C:\Program Files\Common Files\VST3\
+    2. DAW を起動してプラグインをスキャンさせます
+
+■ はじめかた
+
+  - クロック源は既定で HOST です。DAW を再生するとシーケンサーが鳴ります。
+  - DAW を使わず単体で鳴らすには CLOCK を INT に切り替えて PLAY を押します。
+  - PLAY ボタンは Host モードでも停止ボタンとして使えます。
+    もう一度押すと再開します（DAW を停止 -> 再生し直しても自動で再開）。
+  - 中央の 16 ステップグリッドで NOTE / OCT / ACC / SLD / REST を編集できます。
+
+■ 音のサンプル
+
+  demo/ にプリセットの演奏サンプル（16bit / 48kHz WAV）が入っています。
+
+■ ライセンス / ソースコード
+
+  本ソフトウェアは GNU Affero General Public License v3.0 またはそれ以降で
+  配布されます。ライセンス全文は LICENSE を参照してください。
+
+  対応するソースコード（Corresponding Source）:
+    - https://github.com/artcode49-prog/artcode303
+    - 同梱の source/ フォルダにも、このバージョンと同一のソースが入っています
+
+  本ソフトウェアは無保証で提供されます（AGPLv3 第 15 条・第 16 条）。
+
+■ 内容物
+
+  README.md          詳細なドキュメント（サウンドエンジン / パラメータ / ビルド方法）
+  LICENSE            GNU Affero General Public License v3 全文
+  SOURCE.txt         ソースコードの入手先
+  macOS/             macOS 用 VST3（Universal Binary）
+  Windows/           Windows 用 VST3（x64）
+  demo/              演奏サンプル WAV
+  source/            対応するソースコードのスナップショット

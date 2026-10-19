@@ -23,16 +23,17 @@ Roland TB-303 のアナログ挙動をモデリングした VST3 シンセサイ
 
 ## 目次
 1. [ダウンロード（ビルド済み VST3）](#ダウンロードビルド済み-vst3)
-2. [音作りの構成（サウンドエンジン）](#サウンドエンジン)
-3. [パラメータ一覧](#パラメータ一覧)
-4. [内蔵シーケンサーの使い方](#シーケンサーの使い方)
-5. [GUI の説明](#gui-の説明)
-6. [ビルド方法](#ビルド方法)
-7. [検証用ツール（レンダラー）](#検証用ツール)
-8. [検証結果](#検証結果)
-9. [ファイル構成](#ファイル構成)
-10. [ライセンス](#ライセンス)
-11. [既知の注意点](#既知の注意点)
+2. [配布セットを作る](#配布セットを作る)
+3. [音作りの構成（サウンドエンジン）](#サウンドエンジン)
+4. [パラメータ一覧](#パラメータ一覧)
+5. [内蔵シーケンサーの使い方](#シーケンサーの使い方)
+6. [GUI の説明](#gui-の説明)
+7. [ビルド方法](#ビルド方法)
+8. [検証用ツール（レンダラー）](#検証用ツール)
+9. [検証結果](#検証結果)
+10. [ファイル構成](#ファイル構成)
+11. [ライセンス](#ライセンス)
+12. [既知の注意点](#既知の注意点)
 
 ---
 
@@ -190,6 +191,41 @@ gh run download -R artcode49-prog/artcode303 -n Acid303-Windows-VST3
 > **注意**: このバイナリは AGPLv3 で配布されます。ソースは本リポジトリです。
 > macOS 版は署名・公証を行っていないため、初回起動時に Gatekeeper の警告が
 > 出ることがあります。
+
+---
+
+## 配布セットを作る
+
+他の人に渡せる「一式」を `./make_dist.sh` で作れます。
+
+```bash
+./make_dist.sh
+```
+
+- macOS 版は `Build/` のビルド済み VST3 を使います（先にビルドが必要です）
+- Windows 版は `gh` で最新の CI 成果物を自動取得します
+  （手元に Windows ビルドがある場合は `./make_dist.sh path/to/Acid303.vst3`）
+
+出力:
+
+```
+Dist/
+  Acid303-1.0.0/
+    INSTALL-ja.txt                       簡易インストール手順 (これを渡せば OK)
+    README.md                            このドキュメント
+    LICENSE                              AGPLv3 全文
+    SOURCE.txt                           ソースコードの入手先
+    macOS/Acid303.vst3                   Universal Binary (arm64 + x86_64)
+    Windows/Acid303.vst3                 x64
+    demo/*.wav                           演奏サンプル (16bit / 48kHz)
+    source/Acid303-1.0.0-source.tar.gz   対応するソース (AGPLv3 用)
+  Acid303-1.0.0-macOS-Windows.zip        一式を zip にしたもの
+```
+
+`Dist/` は git 管理外なので、リポジトリを汚しません。
+
+> AGPLv3 ではバイナリと一緒に **対応するソース** を提供する必要があるため、
+> セットには `source/` にソースのスナップショットを同梱しています。
 
 ---
 
@@ -387,7 +423,12 @@ CMakeLists.txt             ビルド定義 (Universal Binary 強制を含む)
 CMakePresets.json          macOS / Windows の CMake プリセット
 build.sh                   macOS: ビルド / インストール / テストのヘルパー
 build.bat                  Windows: ビルド / インストール / テストのヘルパー
+make_dist.sh               配布セット Dist/ を組み立てる (両 OS の VST3 +
+                           ドキュメント + デモ WAV + ソーススナップショットを zip 化)
+INSTALL-ja.txt             配布セットに同梱する簡易インストール手順
 .github/workflows/build.yml  CI: macOS (Universal) と Windows の VST3 を自動ビルド
+
+Dist/                      配布セットの出力先 (git 管理外 / ./make_dist.sh で生成)
 
 Source/
   PluginProcessor.h/.cpp   VST3 ラッパー: 15 パラメータ, パターン状態, MIDI,
@@ -474,6 +515,9 @@ Presets/
 
 ### 修正履歴
 
+- **配布セット (`./make_dist.sh`)**：両 OS の VST3 + ドキュメント + デモ WAV +
+  ソーススナップショットを `Dist/` にまとめて zip 化。`INSTALL-ja.txt` を同梱し、
+  受け取った人がそのまま使える形にしました。
 - **PLAY ボタンで停止できるように修正**：Host モードでは PLAY ボタンの状態が
   DAW の再生状態に強制同期され、`sequencerRunning` が再生判定に使われていな
   かったため、DAW が再生中だと PLAY を押しても止められませんでした。トランス

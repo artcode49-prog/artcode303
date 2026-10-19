@@ -9,6 +9,9 @@ cmake-build-*/
 *.dylib
 *.dll
 
+# --- distribution set (regenerate with ./make_dist.sh) --------------------
+Dist/
+
 # --- verification output --------------------------------------------------
 check.wav
 *.acid303
