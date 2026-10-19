@@ -230,7 +230,8 @@ Dist/
 macOS では、**署名のないプラグインはダウンロード後に Gatekeeper にブロック**
 されます（「開発元を確認できません」「壊れているため開けません」）。
 `make_dist.sh` は `Developer ID Application` 証明書がキーチェーンにあれば
-**自動で署名**します（現在: `Ryuya Yanagisawa (BDKDD2PV79)`）。
+**自動で署名**します（現在: `Ryuya Yanagisawa (BDKDD2PV79)`、**この Mac では
+署名・公証とも設定済み**）。
 
 公証 (notarization) まで行うと、他の Mac でも警告なしで使えるようになります。
 初回だけ次を実行して認証情報をキーチェーンに保存してください（パスワードは
@@ -442,6 +443,17 @@ JUCE 不要。単体でコンパイルして使えます。
 安全性、バックグラウンドスレッド状態、パラメータファズを含む全テストに合格して
 います。
 
+macOS の配布ビルドは **Developer ID で署名 + Apple の公証 (notarization) 済み**
+です。ブラウザからダウンロードしたときと同じ「隔離属性」を付けた状態でも、
+Gatekeeper を通過します。
+
+```
+$ spctl -a -vvv -t install Acid303.vst3
+Acid303.vst3: accepted
+source=Notarized Developer ID
+origin=Developer ID Application: Ryuya Yanagisawa (BDKDD2PV79)
+```
+
 ---
 
 ## ファイル構成
@@ -544,11 +556,13 @@ Presets/
 
 ### 修正履歴
 
-- **macOS ビルドに Developer ID 署名を追加**：ad-hoc 署名のままだと、ダウン
-  ロードした人が Gatekeeper に「開発元を確認できません」とブロックされて
-  しまいました。`make_dist.sh` が `Developer ID Application` 証明書で
-  署名（hardened runtime + タイムスタンプ）するようにし、`notarytool` の
-  認証情報があれば**公証 + ステープル**まで行います。`INSTALL-ja/en.txt` に
+- **macOS ビルドに Developer ID 署名 + 公証を追加**：ad-hoc 署名のままだと、
+  ダウンロードした人が Gatekeeper に「開発元を確認できません」とブロックされて
+  しまいました。`make_dist.sh` が `Developer ID Application` 証明書で署名
+  （hardened runtime + タイムスタンプ）し、`notarytool` の認証情報
+  (`ACID303_NOTARY_PROFILE`) があれば **Apple の公証 + チケットのステープル**
+  まで行います。公証済みのため、隔離属性が付いたダウンロードでも
+  `accepted / source=Notarized Developer ID` になります。`INSTALL-ja/en.txt` に
   Gatekeeper / SmartScreen の対処も追記しました。
 - **配布セット (`./make_dist.sh`)**：両 OS の VST3 + ドキュメント + デモ WAV +
   ソーススナップショットを `Dist/` にまとめて zip 化。`INSTALL-ja.txt` /
