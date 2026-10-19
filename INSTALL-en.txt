@@ -1,0 +1,52 @@
+ACID-303 — TB-303 style VST3 instrument
+=======================================
+Version 1.0.0  /  License: GNU AGPL v3.0 or later (see LICENSE)
+
+This folder is a complete distribution set.
+
+INSTALLING
+
+  macOS (Universal: Apple Silicon and Intel)
+    1. Copy macOS/Acid303.vst3 into
+         ~/Library/Audio/Plug-Ins/VST3/
+       (In Finder, use Go > Go to Folder... and paste that path.)
+    2. Start your DAW and let it scan for plugins (most do this automatically).
+    3. The build is unsigned, so Gatekeeper may warn on first use.
+
+  Windows (64-bit)
+    1. Copy Windows/Acid303.vst3 into
+         C:\Program Files\Common Files\VST3\
+    2. Start your DAW and let it scan for plugins.
+
+GETTING STARTED
+
+  - The clock source defaults to HOST: play your DAW and the sequencer runs.
+  - To play it without a DAW, switch CLOCK to INT and press PLAY.
+  - The PLAY button also stops the sequencer in Host mode. Press it again to
+    resume; a fresh DAW transport start re-arms it automatically.
+  - Edit the 16 steps in the grid in the middle: NOTE / OCT / ACC / SLD / REST.
+
+AUDIO DEMOS
+
+  demo/ contains rendered examples of the factory presets (16-bit / 48 kHz WAV).
+
+LICENSE / SOURCE CODE
+
+  This software is distributed under the GNU Affero General Public License
+  v3.0 or later. See LICENSE for the full text.
+
+  Corresponding Source:
+    - https://github.com/artcode49-prog/artcode303
+    - source/ also contains a snapshot of the source for this exact version
+
+  This software is provided without warranty (AGPLv3 sections 15 and 16).
+
+CONTENTS
+
+  README.md          full documentation (sound engine / parameters / building)
+  LICENSE            GNU Affero General Public License v3
+  SOURCE.txt         where to get the source code
+  macOS/             macOS VST3 (Universal Binary)
+  Windows/           Windows VST3 (x64)
+  demo/              rendered audio examples (WAV)
+  source/            snapshot of the corresponding source code

@@ -211,7 +211,8 @@ gh run download -R artcode49-prog/artcode303 -n Acid303-Windows-VST3
 ```
 Dist/
   Acid303-1.0.0/
-    INSTALL-ja.txt                       簡易インストール手順 (これを渡せば OK)
+    INSTALL-ja.txt                       簡易インストール手順 (日本語 / これを渡せば OK)
+    INSTALL-en.txt                       簡易インストール手順 (英語)
     README.md                            このドキュメント
     LICENSE                              AGPLv3 全文
     SOURCE.txt                           ソースコードの入手先
@@ -425,7 +426,7 @@ build.sh                   macOS: ビルド / インストール / テストの�
 build.bat                  Windows: ビルド / インストール / テストのヘルパー
 make_dist.sh               配布セット Dist/ を組み立てる (両 OS の VST3 +
                            ドキュメント + デモ WAV + ソーススナップショットを zip 化)
-INSTALL-ja.txt             配布セットに同梱する簡易インストール手順
+INSTALL-ja.txt / INSTALL-en.txt  配布セットに同梱する簡易インストール手順（日 / 英）
 .github/workflows/build.yml  CI: macOS (Universal) と Windows の VST3 を自動ビルド
 
 Dist/                      配布セットの出力先 (git 管理外 / ./make_dist.sh で生成)
@@ -516,7 +517,8 @@ Presets/
 ### 修正履歴
 
 - **配布セット (`./make_dist.sh`)**：両 OS の VST3 + ドキュメント + デモ WAV +
-  ソーススナップショットを `Dist/` にまとめて zip 化。`INSTALL-ja.txt` を同梱し、
+  ソーススナップショットを `Dist/` にまとめて zip 化。`INSTALL-ja.txt` /
+  `INSTALL-en.txt`（日 / 英のインストール手順）を同梱し、
   受け取った人がそのまま使える形にしました。
 - **PLAY ボタンで停止できるように修正**：Host モードでは PLAY ボタンの状態が
   DAW の再生状態に強制同期され、`sequencerRunning` が再生判定に使われていな

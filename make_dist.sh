@@ -44,7 +44,7 @@ mkdir -p "$set_dir/macOS" "$set_dir/Windows" "$set_dir/demo" "$set_dir/source"
 
 cp -R "$mac_plugin" "$set_dir/macOS/"
 cp -R "$win_plugin" "$set_dir/Windows/"
-cp README.md LICENSE INSTALL-ja.txt "$set_dir/"
+cp README.md LICENSE INSTALL-ja.txt INSTALL-en.txt "$set_dir/"
 cp Presets/*.wav "$set_dir/demo/"
 
 # Source snapshot for AGPL compliance (demo wavs already live in demo/).
