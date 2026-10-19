@@ -18,16 +18,15 @@ jobs:
 
       - name: Configure
         run: >
-          cmake -S . -B Build -G Ninja
-          -DCMAKE_BUILD_TYPE=Release
+          cmake -S . -B Build -G Xcode
           -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
           -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0
 
       - name: Build
-        run: cmake --build Build -j3
+        run: cmake --build Build --config Release -j3
 
       - name: DSP self test
-        run: ./Build/tb303_render selftest
+        run: ./Build/Release/tb303_render selftest
 
       - name: Upload VST3
         uses: actions/upload-artifact@v4

@@ -232,12 +232,25 @@ cmake --preset macos-universal && cmake --build --preset macos-universal
 ### CI (GitHub Actions)
 
 `.github/workflows/build.yml` で **macOS (Universal) と Windows (x64)** の
-VST3 を自動ビルドし、成果物としてアップロードします。タグを push するか
-手動実行 (`workflow_dispatch`) で両プラットフォームのバイナリが得られます。
+VST3 を自動ビルドし、成果物 (artifact) としてアップロードします。
+`push` / `pull_request` / 手動 (`workflow_dispatch`) で実行されます。
+
+```bash
+# このフォルダは git リポジトリ済み（初回コミット済み）
+git remote add origin https://github.com/<あなたのユーザー>/<リポジトリ>.git
+git branch -M main
+git push -u origin main
+```
+
+push すると GitHub の **Actions** タブでビルドが走り、完了後に
+`Acid303-macOS-VST3` と `Acid303-Windows-VST3` をダウンロードできます。
+
+- macOS: `Acid303.vst3` を `~/Library/Audio/Plug-Ins/VST3/` へ
+- Windows: 展開して `C:\Program Files\Common Files\VST3\Acid303.vst3` へ
 
 > このマシン (macOS) には MSVC / MinGW が無いため Windows バイナリのローカル
-> 生成はできません。Windows 版は上記 `build.bat` を Windows 上で実行するか、
-> CI で生成してください。
+> 生成はできません。Windows 版は上記 CI、または Windows 実機での `build.bat`
+> 実行で生成してください。
 
 ビルド成果物:
 
