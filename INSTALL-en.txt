@@ -11,7 +11,7 @@ INSTALLING
          ~/Library/Audio/Plug-Ins/VST3/
        (In Finder, use Go > Go to Folder... and paste that path.)
     2. Start your DAW and let it scan for plugins (most do this automatically).
-    3. The build is unsigned, so Gatekeeper may warn on first use.
+    3. If macOS complains, see "BLOCKED BY MACOS" below.
 
   Windows (64-bit)
     1. Copy Windows/Acid303.vst3 into
@@ -25,6 +25,24 @@ GETTING STARTED
   - The PLAY button also stops the sequencer in Host mode. Press it again to
     resume; a fresh DAW transport start re-arms it automatically.
   - Edit the 16 steps in the grid in the middle: NOTE / OCT / ACC / SLD / REST.
+
+BLOCKED BY MACOS (Gatekeeper)
+
+  This build is signed with an Apple Developer ID (a notarized build normally
+  opens without any warning). If macOS still says "cannot be opened because the
+  developer cannot be verified" or that the plugin is damaged, the download's
+  quarantine flag is the cause. Remove it in Terminal:
+
+    xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/Acid303.vst3
+
+  (Adjust the path if you installed it somewhere else.) Then restart your DAW
+  and rescan.
+
+BLOCKED BY WINDOWS (SmartScreen)
+
+  If you see "Windows protected your PC", choose More info > Run anyway.
+  Before extracting the ZIP you can also right-click the file, open Properties
+  and tick "Unblock" at the bottom.
 
 AUDIO DEMOS
 

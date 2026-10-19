@@ -225,6 +225,34 @@ Dist/
 
 `Dist/` は git 管理外なので、リポジトリを汚しません。
 
+### 署名と公証（Gatekeeper 対策）
+
+macOS では、**署名のないプラグインはダウンロード後に Gatekeeper にブロック**
+されます（「開発元を確認できません」「壊れているため開けません」）。
+`make_dist.sh` は `Developer ID Application` 証明書がキーチェーンにあれば
+**自動で署名**します（現在: `Ryuya Yanagisawa (BDKDD2PV79)`）。
+
+公証 (notarization) まで行うと、他の Mac でも警告なしで使えるようになります。
+初回だけ次を実行して認証情報をキーチェーンに保存してください（パスワードは
+[appleid.apple.com](https://appleid.apple.com) で発行する**アプリ用パスワード**）:
+
+```bash
+xcrun notarytool store-credentials ACID303 \
+  --apple-id <あなたの Apple ID> --team-id BDKDD2PV79
+```
+
+以降は次のように実行すると、署名 → 公証 → ステープルまで自動で行います:
+
+```bash
+ACID303_NOTARY_PROFILE=ACID303 ./make_dist.sh
+```
+
+署名だけの場合は `./make_dist.sh` のみで構いません（その場合、受け取った人が
+隔離属性を外す必要があります → `INSTALL-ja.txt` / `INSTALL-en.txt` 参照）。
+
+> Windows 側はコード署名証明書が無いため未署名です。受け取った人には
+> SmartScreen の「詳細情報 → 実行」を案内してください。
+
 > AGPLv3 ではバイナリと一緒に **対応するソース** を提供する必要があるため、
 > セットには `source/` にソースのスナップショットを同梱しています。
 
@@ -516,6 +544,12 @@ Presets/
 
 ### 修正履歴
 
+- **macOS ビルドに Developer ID 署名を追加**：ad-hoc 署名のままだと、ダウン
+  ロードした人が Gatekeeper に「開発元を確認できません」とブロックされて
+  しまいました。`make_dist.sh` が `Developer ID Application` 証明書で
+  署名（hardened runtime + タイムスタンプ）するようにし、`notarytool` の
+  認証情報があれば**公証 + ステープル**まで行います。`INSTALL-ja/en.txt` に
+  Gatekeeper / SmartScreen の対処も追記しました。
 - **配布セット (`./make_dist.sh`)**：両 OS の VST3 + ドキュメント + デモ WAV +
   ソーススナップショットを `Dist/` にまとめて zip 化。`INSTALL-ja.txt` /
   `INSTALL-en.txt`（日 / 英のインストール手順）を同梱し、
