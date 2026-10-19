@@ -175,9 +175,13 @@ Roland TB-303 のアナログ挙動をモデリングした VST3 シンセサイ
 
 | ファイル | 内容 |
 |---|---|
-| `Acid303-1.0.0-macOS.zip` | macOS 版 (Universal: arm64 + x86_64) — **Developer ID 署名 + Apple 公証済み** |
+| `Acid303-1.0.0-macOS.dmg` | macOS 版のディスクイメージ — **署名 + 公証済み（推奨）** |
+| `Acid303-1.0.0-macOS.zip` | macOS 版 (Universal: arm64 + x86_64) — 署名 + 公証済み |
 | `Acid303-1.0.0-Windows.zip` | Windows 版 (x64) — 未署名 |
 | `Acid303-1.0.0-macOS-Windows.zip` | 両方 |
+
+macOS は `.dmg` を開いて `Acid303.vst3` を `~/Library/Audio/Plug-Ins/VST3/` へ
+ドラッグするだけです。
 
 ### ダウンロード時の警告について
 
@@ -250,6 +254,7 @@ Dist/
     Windows/Acid303.vst3                 x64
     demo/*.wav                           演奏サンプル (16bit / 48kHz)
     source/Acid303-1.0.0-source.tar.gz   対応するソース (AGPLv3 用)
+  Acid303-1.0.0-macOS.dmg                macOS 版のディスクイメージ (署名 + 公証済み)
   Acid303-1.0.0-macOS.zip                macOS 版だけをまとめた zip (単体で完結)
   Acid303-1.0.0-Windows.zip              Windows 版だけをまとめた zip (単体で完結)
   Acid303-1.0.0-macOS-Windows.zip        両 OS をまとめた zip
@@ -593,6 +598,11 @@ Presets/
 
 ### 修正履歴
 
+- **macOS 版に署名・公証済みの `.dmg` を追加**：`.zip` の中に Mach-O 実行
+  ファイルが入っている形はブラウザやセキュリティソフトの検査で引っかかりやすい
+  ため、macOS の標準的な配布形式であるディスクイメージ
+  `Acid303-1.0.0-macOS.dmg` を追加しました（DMG 自体にも署名・公証・ステープル
+  済み。`spctl -t open --context context:primary-signature` → `accepted`）。
 - **GitHub Release を公開**：配布用の zip を
   <https://github.com/artcode49-prog/artcode303/releases/latest> に置きました。
   ブラウザの「不審なダウンロード」警告はコード署名ではなく Google Safe Browsing /

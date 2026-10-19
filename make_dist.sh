@@ -109,6 +109,36 @@ elif [ -n "$sign_identity" ]; then
     echo "      then re-run:  ACID303_NOTARY_PROFILE=ACID303 ./make_dist.sh"
 fi
 
+#---------------------------------------------------------------- macOS disk image
+# A .zip full of Mach-O code is what browser/AV heuristics tend to look at
+# hardest. A signed, notarized .dmg is the usual way to hand a macOS build to
+# someone (and it installs with a drag-and-drop).
+mac_dmg="Dist/$name-macOS.dmg"
+
+if command -v hdiutil >/dev/null 2>&1; then
+    dmg_stage="$work/dmg"
+    rm -rf "$dmg_stage"
+    mkdir -p "$dmg_stage"
+    cp -R "$mac_bundle" "$dmg_stage/Acid303.vst3"
+    cp "$set_dir/INSTALL-ja.txt" "$set_dir/INSTALL-en.txt" \
+       "$set_dir/LICENSE" "$set_dir/SOURCE.txt" "$dmg_stage/"
+    find "$dmg_stage" -name '.DS_Store' -delete
+    rm -f "$mac_dmg"
+    hdiutil create -quiet -volname "ACID-303 $version" \
+        -srcfolder "$dmg_stage" -ov -format UDZO "$mac_dmg"
+
+    if [ -n "$sign_identity" ]; then
+        codesign --force --timestamp --sign "$sign_identity" "$mac_dmg"
+    fi
+
+    if [ -n "${ACID303_NOTARY_PROFILE:-}" ]; then
+        echo "notarizing the disk image..."
+        xcrun notarytool submit "$mac_dmg" --keychain-profile "$ACID303_NOTARY_PROFILE" --wait
+        xcrun stapler staple "$mac_dmg"
+        xcrun stapler validate "$mac_dmg"
+    fi
+fi
+
 #---------------------------------------------------------------- zip
 # One archive per platform, plus the combined set. Keeping them apart makes it
 # obvious which build an operating system is unhappy about: the macOS bundle is
@@ -143,6 +173,7 @@ stage_platform "Windows" "$win_zip"
 
 echo
 echo "set:         $set_dir"
+echo "macOS dmg:   $mac_dmg ($(du -h "$mac_dmg" | cut -f1))"
 echo "macOS:       $mac_zip ($(du -h "$mac_zip" | cut -f1))"
 echo "Windows:     $win_zip ($(du -h "$win_zip" | cut -f1))"
 echo "both OSes:   $all_zip ($(du -h "$all_zip" | cut -f1))"
